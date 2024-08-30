@@ -1,0 +1,53 @@
+<!-- app/views/weather/index.html.erb -->
+<div id="weather-info">
+  <% if @weather %>
+    <p>City: <%= @weather.city %></p>
+    <p>Temperature: <%= @weather.temperature %> °F</p>
+    <p>Description: <%= @weather.weather_description %></p>
+  <% end %>
+</div>
+
+<script>
+
+  function fetchWeather(lat, lon) {
+    fetch(`/weather?lat=${lat}&lon=${lon}`, {
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      }
+    })
+      .then(response => response.json())
+      .then(data => {
+        const weatherDiv = document.getElementById('weather-info');
+        if (data.error) {
+          weatherDiv.innerHTML = `<p>Error: ${data.error}</p>`;
+        } else {
+          weatherDiv.innerHTML = `
+            <p>City: ${data.city}</p>
+            <p>Temperature: ${data.temperature} °F</p>
+            <p>Description: ${data.weather_description}</p>
+          `;
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        document.getElementById('weather-info').innerHTML = `<p>An error occurred while fetching weather data. Please try again later.</p>`;
+      });
+  }
+
+  document.addEventListener('DOMContentLoaded', function() {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(function(position) {
+        fetchWeather(position.coords.latitude, position.coords.longitude);
+      });
+    }
+  });
+</script>
+
+<div id="weather-search">
+  <form action="/weather" method="get">
+    <label for="city">Search by City:</label>
+    <input type="text" id="city" name="city" />
+    <button type="submit">Search</button>
+  </form>
+</div>

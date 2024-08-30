@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  web:
+    build: .
+    command: bash -c "rm -f tmp/pids/server.pid && bundle exec rails server -b 0.0.0.0"
+    volumes:
+      - .:/weather-service
+    ports:
+      - "3000:3000"
+    depends_on:
+      - db
+    networks:
+      - local-network
+    environment:
+      - DOCKERIZED=true
+    env_file:
+      - .env
+    stdin_open: true
+    tty: true
+  db:
+    image: postgres:15
+    container_name: weather-postgres
+    environment:
+      POSTGRES_USER: weather_user
+      POSTGRES_PASSWORD: weather_password
+      POSTGRES_DB: weather_development
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - local-network
+    ports:
+      - "5432:5432"
+
+volumes:
+  postgres_data:
+
+networks:
+  local-network:
+    external: true
+

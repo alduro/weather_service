@@ -1,0 +1,20 @@
+default: &default
+  adapter: postgresql
+  encoding: unicode
+  host: db
+  username: weather_user
+  password: weather_password
+  pool: 5
+
+development:
+  <<: *default
+  database: weather_development
+
+test:
+  <<: *default
+  database: weather_test
+
+production:
+  <<: *default
+  database: weather_production
+
