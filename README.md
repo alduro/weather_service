@@ -2,6 +2,8 @@
 
 ## Install Docker
 
+### Environment
+- cp env.sample to .env
 ### create local network
 - docker network create local-network
 
